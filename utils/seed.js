@@ -1,5 +1,5 @@
 const connection = require('../config/connection');
-const { User, Video } = require('../models');
+const { User, Thought } = require('../models');
 const { getRandomName, getRandomVideos } = require('./data');
 
 connection.on('error', (err) => err);
@@ -7,18 +7,18 @@ connection.on('error', (err) => err);
 connection.once('open', async () => {
   console.log('connected');
   // Delete the collections if they exist
-  let videoCheck = await connection.db.listCollections({ name: 'videos' }).toArray();
+  let videoCheck = await connection.db.listCollections({ name: 'thought' }).toArray();
   if (videoCheck.length) {
-    await connection.dropCollection('videos');
+    await connection.dropCollection('thought');
   }
 
-  let userCheck = await connection.db.listCollections({ name: 'users' }).toArray();
+  let userCheck = await connection.db.listCollections({ name: 'user' }).toArray();
   if (userCheck.length) {
-    await connection.dropCollection('users');
+    await connection.dropCollection('user');
   }
 
   const users = [];
-  const videos = getRandomVideos(10);
+  const thoughts = getRandomVideos(10);
 
   for (let i = 0; i < 20; i++) {
     const fullName = getRandomName();
@@ -33,11 +33,11 @@ connection.once('open', async () => {
   }
 
   await User.collection.insertMany(users);
-  await Video.collection.insertMany(videos);
+  await Thought.collection.insertMany(thoughts);
 
   // loop through the saved videos, for each video we need to generate a video response and insert the video responses
   console.table(users);
-  console.table(videos);
+  console.table(thoughts);
   console.info('Seeding complete! 🌱');
   process.exit(0);
 });
